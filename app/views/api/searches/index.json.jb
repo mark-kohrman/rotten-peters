@@ -1,0 +1,9 @@
+@searches.map do |search|{
+
+  id: search["imdbID"],
+  title: search["Title"],
+  release_year: search["Year"],
+  img_url: search["Poster"],
+
+}
+end
