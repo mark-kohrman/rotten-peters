@@ -10,12 +10,10 @@ Rails.application.routes.draw do
     patch "/movies/:id" => "movies#update"
     delete "/movies/:id" => "movies#destroy"
 
-    
     post "/searches" => "searches#index"
     get "/searches/:id" => "searches#show"
 
-
-
+    post "/users" => "users#create"
   end
 
   root 'application#index'
