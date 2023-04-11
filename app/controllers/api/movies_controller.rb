@@ -1,9 +1,12 @@
 class Api::MoviesController < ApplicationController
   skip_before_action :verify_authenticity_token
   def index
-    raw_movies = Movie.where("(thumbs_up) > 0").or(Movie.where("(thumbs_down) > 0"))
+    # raw_movies = Movie.where("!rating.to_s.empty?")
+    raw_movies = Movie.all
+    p raw_movies
 
-    @movies =  raw_movies.order('thumbs_up DESC')
+    @movies =  raw_movies 
+    #order('rating DESC') - TODO: order alphabetically by title
 
     render 'index.json.jb'
   end
@@ -12,6 +15,7 @@ class Api::MoviesController < ApplicationController
   def create
     if !Movie.find_by(id: params[:id])
       response = HTTP.get("http://www.omdbapi.com/?apikey=#{Rails.application.credentials.movie_api[:api_key]}&i=#{params[:imbd_id]}")
+      p response
       new_movie = response.parse
 
       @movie = Movie.create(
@@ -22,8 +26,7 @@ class Api::MoviesController < ApplicationController
         description: new_movie["Plot"],
         img_url: new_movie["Poster"],
         imdb_id: new_movie["imdbID"],
-        thumbs_up: 0,
-        thumbs_down: 0
+        rating: new_movie["rating"]
       )
       if @movie.save!
         render "show.json.jb"
@@ -35,16 +38,14 @@ class Api::MoviesController < ApplicationController
   end
 
   def update
+    p "UPDATE METHOD"
+p params
     @movie = Movie.find_by(imdb_id: params[:imdb_id])
+    @movie = Movie.find_by(imdb_id: params[:id])
+    p "UPDATE METHOD"
+    p @movie
+    @movie.update_attributes(rating: params[:rating])
 
-    if params[:thumb] == "up"
-      @movie = Movie.find_by(imdb_id: params[:id])
-      p @movie
-      @movie.update_attributes(thumbs_up: @movie.thumbs_up + 1)
-    elsif params[:thumb] == "down"
-      @movie = Movie.find_by(imdb_id: params[:id])
-      @movie.update_attributes(thumbs_down: @movie.thumbs_down + 1)
-    end
   
 
     render 'show.json.jb'

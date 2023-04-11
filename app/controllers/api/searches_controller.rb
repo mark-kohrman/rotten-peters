@@ -30,8 +30,7 @@ class Api::SearchesController < ApplicationController
         description: @search["Plot"],
         imdb_id: @search["imdbID"],
         img_url: @search["Poster"],
-        thumbs_up: 0,
-        thumbs_down: 0
+        rating: 0
       )
       p added_movie
 

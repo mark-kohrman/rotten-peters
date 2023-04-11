@@ -7,6 +7,5 @@
   description: @movie.description,
   img_url: @movie.img_url,
   imdb_id: @movie.imdb_id,
-  thumbs_up: @movie.thumbs_up,
-  thumbs_down: @movie.thumbs_down
+  rating: @movie.rating
 }
